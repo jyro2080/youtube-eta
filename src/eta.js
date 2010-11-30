@@ -149,7 +149,7 @@ function display(loaded, total, okToWatch, timestamp) {
   } else {
 
     if(okToWatch) {
-      banner.innerHTML += '<br/><b>OK</b> to start';
+      banner.innerHTML += '<br/>OK to start';
       banner.setAttribute('class','enough');
     } else {
       banner.setAttribute('class','notenough');
