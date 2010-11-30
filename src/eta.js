@@ -1,30 +1,42 @@
 
 (function () {
 
-var mplayer = document.getElementById('movie_player');
-
 var POLL_INTERVAL = 200;
 var safetyCounter = 5000/POLL_INTERVAL; // 5 seconds
+ETA = '<b>ETA</b>&nbsp;';
 
+var mplayer = document.getElementById('movie_player');
 
-if(mplayer === null) return;
+var isFlashPlayer = false;
+if(mplayer !== null) {
+  isFlashPlayer = true;
+} else {
+  velems = document.getElementsByTagName('video');
+  if(velems.length > 0) {
+    mplayer = velems[0];
+    isFlashPlayer = false;
+  } else {
+    // non-video youtube page
+    return;
+  }
+}
+
 
 var banner = document.createElement('div');
 banner.id = 'etabanner';
 banner.setAttribute('class','notenough');
 banner.innerHTML = ETA;
 document.body.appendChild(banner);
-ETA = '<b>ETA</b>&nbsp;';
 
-
-var timer = setInterval(updateETA, 200);
+var timer = setInterval(isFlashPlayer ? updateETAFlash : updateETAHtml5, 200);
 var startTS = new Date().getTime();
 var stopFlag = false;
 var videoDuration;
 
-function updateETA() {
-  var mplayer = document.getElementById('movie_player');
-  var div = document.getElementById('etabanner');
+function updateETAHtml5() {
+}
+
+function updateETAFlash() {
 
   if(mplayer.getPlayerState() === 1 && !stopFlag) {
     mplayer.pauseVideo();
@@ -66,7 +78,7 @@ function updateETA() {
   if(eta_sec > 0 && eta_hr === 0) {  // hours make seconds insignificant
     timestamp += eta_sec+'s';
   }
-  div.innerHTML = ETA + timestamp;
+  banner.innerHTML = ETA + timestamp;
 
   var title_timestamp = '';
   if(eta_hr !== 0) {
@@ -93,7 +105,7 @@ function updateETA() {
 
   if(loaded === total && safetyCounter-- <= 0) {
     clearInterval(timer);
-    div.style.display = 'none';
+    banner.style.display = 'none';
     if(/\[.*\](.*)/.test(document.title)) {
       document.title = /\[.*\](.*)/.exec(document.title)[1];
     }
