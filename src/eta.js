@@ -2,7 +2,7 @@
 (function () {
 
 var POLL_INTERVAL = 200;
-var safetyCounter = 5000/POLL_INTERVAL; // 5 seconds
+var safetyCounter = 10000/POLL_INTERVAL; // 5 seconds
 ETA = '<b>ETA</b>&nbsp;';
 
 var mplayer = document.getElementById('movie_player');
@@ -44,6 +44,13 @@ function updateETAHtml5() {
   var loaded = mplayer.buffered.end(0);
   var total = videoDuration;
 
+  var eta = calculate_eta(loaded, total);
+
+  var okToWatch = ( eta < (videoDuration - mplayer.currentTime) ) 
+
+  var timestamp = compose_timestamp(eta);
+
+  display(loaded, total, okToWatch, timestamp);
 }
 
 function updateETAFlash() {
@@ -56,46 +63,21 @@ function updateETAFlash() {
 
   var loaded = mplayer.getVideoBytesLoaded();
   var total = mplayer.getVideoBytesTotal();
-  var percentage = 100 * loaded / total;
 
-  var elapsed = (new Date().getTime() - startTS) / 1000; // seconds
-  var bps = loaded / elapsed; // bytes per sec
-  var eta = parseInt((total - loaded) / bps);  // seconds
+  var eta = calculate_eta(loaded, total);
 
   var videoCurrent = mplayer.getCurrentTime(); // in seconds
   var okToWatch = ( eta < (videoDuration - videoCurrent) ) 
     
   var timestamp = compose_timestamp(eta);
 
-  banner.innerHTML = ETA + timestamp.long_;
-  var title_timestamp = timestamp.short_;
+  display(loaded, total, okToWatch, timestamp);
+}
 
-  if(okToWatch) {
-    title_timestamp += '*';
-  }
-  var doctitle;
-  if(/\[.*\](.*)/.test(document.title)) {
-    doctitle = /\[.*\](.*)/.exec(document.title)[1];
-  } else {
-    doctitle = document.title;
-  }
-  document.title = '['+title_timestamp+'] '+doctitle;
-
-  if(loaded === total && safetyCounter-- <= 0) {
-    clearInterval(timer);
-    banner.style.display = 'none';
-    if(/\[.*\](.*)/.test(document.title)) {
-      document.title = /\[.*\](.*)/.exec(document.title)[1];
-    }
-  } else {
-
-    if(okToWatch) {
-      banner.innerHTML += '<br/><b>OK</b> to start';
-      banner.setAttribute('class','enough');
-    } else {
-      banner.setAttribute('class','notenough');
-    }
-  }
+function calculate_eta(loaded, total) {
+  var elapsed = (new Date().getTime() - startTS) / 1000; // seconds
+  var bps = loaded / elapsed; // bytes per sec
+  return parseInt((total - loaded) / bps);  // seconds
 }
 
 function compose_timestamp(eta) {
@@ -142,4 +124,38 @@ function compose_timestamp(eta) {
   return { long_ : longts, short_ : shortts };
 }
 
+function display(loaded, total, okToWatch, timestamp) {
+
+  banner.innerHTML = ETA + timestamp.long_;
+  var title_timestamp = timestamp.short_;
+
+  if(okToWatch) {
+    title_timestamp += '*';
+  }
+  var doctitle;
+  if(/\[.*\](.*)/.test(document.title)) {
+    doctitle = /\[.*\](.*)/.exec(document.title)[1];
+  } else {
+    doctitle = document.title;
+  }
+  document.title = '['+title_timestamp+'] '+doctitle;
+
+  if(loaded === total && safetyCounter-- <= 0) {
+    clearInterval(timer);
+    banner.style.display = 'none';
+    if(/\[.*\](.*)/.test(document.title)) {
+      document.title = /\[.*\](.*)/.exec(document.title)[1];
+    }
+  } else {
+
+    if(okToWatch) {
+      banner.innerHTML += '<br/><b>OK</b> to start';
+      banner.setAttribute('class','enough');
+    } else {
+      banner.setAttribute('class','notenough');
+    }
+  }
+}
+
 })();
+
