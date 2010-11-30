@@ -55,43 +55,11 @@ function updateETAFlash() {
   var videoCurrent = mplayer.getCurrentTime(); // in seconds
   var okToWatch = ( eta < (videoDuration - videoCurrent) ) 
     
-  var eta_hr = 0, eta_min = 0, eta_sec = eta;
-  if(eta_sec > 60) {
-    eta_min = parseInt(eta_sec/60);
-    eta_sec = eta_sec % 60;
+  var timestamp = compose_timestamp(eta);
 
-    if(eta_min > 60) {
-      eta_hr = parseInt(eta_min/60);
-      eta_min = eta_min % 60;
-    }
-  }
+  banner.innerHTML = ETA + timestamp.long_;
+  var title_timestamp = timestamp.short_;
 
-  var timestamp = '';
-  if(eta_hr > 0) {
-    timestamp += eta_hr+'h';
-    timestamp += '&nbsp;'
-  }
-  if(eta_min > 0) {
-    timestamp += eta_min+'m';
-    timestamp += '&nbsp;'
-  }
-  if(eta_sec > 0 && eta_hr === 0) {  // hours make seconds insignificant
-    timestamp += eta_sec+'s';
-  }
-  banner.innerHTML = ETA + timestamp;
-
-  var title_timestamp = '';
-  if(eta_hr !== 0) {
-    title_timestamp = eta_hr+'h';
-  } else {
-    if(eta_min !== 0) {
-      title_timestamp = eta_min+'m';
-    } else {
-      if(eta_sec !== 0) {
-        title_timestamp = eta_sec+'s';
-      }
-    }
-  }
   if(okToWatch) {
     title_timestamp += '*';
   }
@@ -117,8 +85,51 @@ function updateETAFlash() {
     } else {
       banner.setAttribute('class','notenough');
     }
-
   }
+}
+
+function compose_timestamp(eta) {
+
+  var eta_hr = 0, eta_min = 0, eta_sec = eta;
+  if(eta_sec > 60) {
+    eta_min = parseInt(eta_sec/60);
+    eta_sec = eta_sec % 60;
+
+    if(eta_min > 60) {
+      eta_hr = parseInt(eta_min/60);
+      eta_min = eta_min % 60;
+    }
+  }
+
+  // Long timestamp for banner
+  var longts = '';
+  if(eta_hr > 0) {
+    longts += eta_hr+'h';
+    longts += '&nbsp;'
+  }
+  if(eta_min > 0) {
+    longts += eta_min+'m';
+    longts += '&nbsp;'
+  }
+  if(eta_sec > 0 && eta_hr === 0) {  // hours make seconds insignificant
+    longts += eta_sec+'s';
+  }
+
+  // Short timestamp for title
+  var shortts = '';
+  if(eta_hr !== 0) {
+    shortts = eta_hr+'h';
+  } else {
+    if(eta_min !== 0) {
+      shortts = eta_min+'m';
+    } else {
+      if(eta_sec !== 0) {
+        shortts = eta_sec+'s';
+      }
+    }
+  }
+
+  return { long_ : longts, short_ : shortts };
 }
 
 })();
