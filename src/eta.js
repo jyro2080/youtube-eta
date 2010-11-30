@@ -6,31 +6,16 @@ var mplayer = document.getElementById('movie_player');
 var POLL_INTERVAL = 200;
 var safetyCounter = 5000/POLL_INTERVAL; // 5 seconds
 
-var NO_WATCH_COLOR = 'rgba(255,0,0,50)';
-var OK_WATCH_COLOR = 'rgba(255,128,0,50)';
 
 if(mplayer === null) return;
 
+var banner = document.createElement('div');
+banner.id = 'etabanner';
+banner.setAttribute('class','notenough');
+banner.innerHTML = ETA;
+document.body.appendChild(banner);
 ETA = '<b>ETA</b>&nbsp;';
 
-div = document.createElement('div');
-div.id = 'etabanner';
-div.style.position = 'absolute';
-div.style.width  = '130px';
-div.style.height = '1.5em';
-div.style.left = '3px';
-div.style.top = '3px';
-div.style.backgroundColor = NO_WATCH_COLOR;
-div.style.padding = '3px';
-div.style.fontSize = '18px';
-div.style.fontFamily = 'MS Trebuchet, Verdana, Sans Serif';
-div.style.color = '#000';
-div.style.webkitBorderRadius = '5px';
-div.style.border = '2px #888 solid';
-div.style.whiteSpace = 'nowrap';
-div.innerHTML = ETA;
-
-document.body.appendChild(div);
 
 var timer = setInterval(updateETA, 200);
 var startTS = new Date().getTime();
@@ -115,13 +100,10 @@ function updateETA() {
   } else {
 
     if(okToWatch) {
-      div.style.backgroundColor = OK_WATCH_COLOR;
-      div.innerHTML += '<br/><b>OK</b> to start';
-      div.style.height = '3em';
-      div.style.whiteSpace = 'normal';
+      banner.innerHTML += '<br/><b>OK</b> to start';
+      banner.setAttribute('class','enough');
     } else {
-      div.style.backgroundColor = NO_WATCH_COLOR;
-      div.style.whiteSpace = 'nowrap';
+      banner.setAttribute('class','notenough');
     }
 
   }

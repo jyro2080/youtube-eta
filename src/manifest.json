@@ -12,6 +12,7 @@
   "content_scripts":[{
     "matches" : ["http://www.youtube.com/*"],
     "js" : ["eta.js"],
+    "css" : ["eta.css"],
     "run_at" : "document_end"
   }],
   "permissions": [
