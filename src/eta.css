@@ -1,20 +1,25 @@
 
 #etabanner {
   position : absolute;
-  width : 130px;
-  left : 3px;
-  top : 3px;
-  padding : 3px;
+  width : 120px;
+  left : 6px;
+  top : 6px;
+  padding : 5px;
+
   font-size : 18px;
   font-family : Trebuchet MS, Verdana, Sans Serif;
   color : #000;
-  webkit-border-radius : 5px;
-  border : 2px #888 solid;
+  text-align : center;
+  text-shadow : 0.06em 0.06em #aaa;
+
+  border-radius : 5px;
+  -webkit-box-shadow:rgba(20,20,20,1) 0px 0px 5px; 
+  box-shadow: 0px 0px 15px #333; 
   white-space : nowrap;
 }
 
 .notenough {
-  background-color : rgba(255,0,0,50);
+  background-color : rgba(255,50,50,100);
   height : 1.5em;
 }
 
