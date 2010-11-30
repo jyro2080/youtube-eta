@@ -1,0 +1,21 @@
+{
+  "name": "Youtube ETA",
+  "version": "0.2",
+
+  "description": "Get ETA on YouTube video.",
+  "icons":{
+    "16" : "images/icon16.png",
+    "28" : "images/icon28.png",
+    "48" : "images/icon48.png",
+    "128" : "images/icon128.png"
+  },
+  "content_scripts":[{
+    "matches" : ["http://www.youtube.com/*"],
+    "js" : ["eta.js"],
+    "run_at" : "document_end"
+  }],
+  "permissions": [
+    "tabs",
+    "http://www.youtube.com/*"
+  ]
+}
