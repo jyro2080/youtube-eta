@@ -34,6 +34,16 @@ var stopFlag = false;
 var videoDuration;
 
 function updateETAHtml5() {
+
+  if(mplayer.currentTime > 0 && !stopFlag) {
+    mplayer.pause();
+    stopFlag = true;
+    videoDuration = mplayer.duration;
+  }
+
+  var loaded = mplayer.buffered.end(0);
+  var total = videoDuration;
+
 }
 
 function updateETAFlash() {
