@@ -2,7 +2,7 @@
 (function () {
 
 var POLL_INTERVAL = 200;
-var safetyCounter = 10000/POLL_INTERVAL; // 5 seconds
+var SAFETY_INTERVAL = 15000;
 ETA = '<b>ETA</b>&nbsp;';
 
 var mplayer = document.getElementById('movie_player');
@@ -140,7 +140,7 @@ function display(loaded, total, okToWatch, timestamp) {
   }
   document.title = '['+title_timestamp+'] '+doctitle;
 
-  if(loaded === total && safetyCounter-- <= 0) {
+  if(loaded === total && totalLifeTime() > SAFETY_INTERVAL) {
     clearInterval(timer);
     banner.style.display = 'none';
     if(/\[.*\](.*)/.test(document.title)) {
@@ -155,6 +155,10 @@ function display(loaded, total, okToWatch, timestamp) {
       banner.setAttribute('class','notenough');
     }
   }
+}
+
+function totalLifeTime() {
+  return (new Date().getTime() - startTS);
 }
 
 })();
