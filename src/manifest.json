@@ -10,13 +10,14 @@
     "128" : "images/icon128.png"
   },
   "content_scripts":[{
-    "matches" : ["http://www.youtube.com/*"],
+    "matches" : ["http://www.youtube.com/*","http://www.ted.com/*"],
     "js" : ["eta.js"],
     "css" : ["eta.css"],
     "run_at" : "document_end"
   }],
   "permissions": [
     "tabs",
+    "http://www.ted.com/*",
     "http://www.youtube.com/*"
   ]
 }

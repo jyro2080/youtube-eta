@@ -4,34 +4,48 @@
 var POLL_INTERVAL = 200;
 var SAFETY_INTERVAL = 15000;
 ETA = '<b>ETA</b>&nbsp;';
+var banner, mplayer, stopFlag, timer, startTS;
 
-var mplayer = document.getElementById('movie_player');
+setTimeout(start, 1000);
 
-var isFlashPlayer = false;
-if(mplayer !== null) {
-  isFlashPlayer = true;
-} else {
-  velems = document.getElementsByTagName('video');
-  if(velems.length > 0) {
-    mplayer = velems[0];
-    isFlashPlayer = false;
-  } else {
-    // non-video youtube page
-    return;
+function start() {
+  if(/ted.com/.test(window.location.hostname)) {
+    mplayer = document.getElementById('tedHTML5');
+    if(mplayer) {
+      var isFlashPlayer = false;
+    } else {
+      return;
+    }
+  } else if(/youtube.com/.test(window.location.hostname)) {
+    mplayer = document.getElementById('movie_player');
+    var isFlashPlayer = false;
+    if(mplayer !== null) {
+      isFlashPlayer = true;
+    } else {
+      velems = document.getElementsByTagName('video');
+      if(velems.length > 0) {
+        mplayer = velems[0];
+        isFlashPlayer = false;
+      } else {
+        // non-video youtube page
+        return;
+      }
+    }
   }
+
+  banner = document.createElement('div');
+  banner.id = 'etabanner';
+  banner.setAttribute('class','notenough');
+  banner.innerHTML = ETA;
+  document.body.appendChild(banner);
+
+  timer = setInterval(isFlashPlayer ? updateETAFlash : updateETAHtml5, 200);
+  startTS = new Date().getTime();
+  stopFlag = false;
+  var videoDuration;
+
+  mplayer.play();
 }
-
-
-var banner = document.createElement('div');
-banner.id = 'etabanner';
-banner.setAttribute('class','notenough');
-banner.innerHTML = ETA;
-document.body.appendChild(banner);
-
-var timer = setInterval(isFlashPlayer ? updateETAFlash : updateETAHtml5, 200);
-var startTS = new Date().getTime();
-var stopFlag = false;
-var videoDuration;
 
 function updateETAHtml5() {
 
