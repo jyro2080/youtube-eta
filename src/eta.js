@@ -5,6 +5,8 @@ var POLL_INTERVAL = 200;
 var SAFETY_INTERVAL = 15000;
 ETA = '<b>ETA</b>&nbsp;';
 var banner, mplayer, stopFlag, timer, startTS;
+var notificationShown = false;
+var videoDuration;
 
 setTimeout(start, 1000);
 
@@ -31,6 +33,30 @@ function start() {
         return;
       }
     }
+  } else if(/vimeo.com/.test(window.location.hostname)) {
+    var vimeo_tries = 0;
+    var max_vimeo_tries = 30;
+    function check_for_video() {
+      var mplayers = document.getElementsByTagName('video');
+      if(mplayers.length > 0) {
+        mplayer = mplayers[0];
+        var isFlashPlayer = false;
+        clearInterval(vimeo_checker); 
+      }
+      vimeo_tries++;
+      if(vimeo_tries >= max_vimeo_tries) {
+        clearInterval(vimeo_checker); 
+      }
+    }
+    var vimeo_checker = setInterval(check_for_video, 2000);
+  } else {
+    var mplayers = document.getElementsByTagName('video');
+    if(mplayers.length > 0) {
+      mplayer = mplayers[0];
+      var isFlashPlayer = false;
+    } else {
+      return;
+    }
   }
 
   banner = document.createElement('div');
@@ -42,8 +68,8 @@ function start() {
   timer = setInterval(isFlashPlayer ? updateETAFlash : updateETAHtml5, 200);
   startTS = new Date().getTime();
   stopFlag = false;
-  var videoDuration;
 
+  askForNotifications();
   mplayer.play();
 }
 
@@ -165,8 +191,42 @@ function display(loaded, total, okToWatch, timestamp) {
     if(okToWatch) {
       banner.innerHTML += '<br/>OK to start';
       banner.setAttribute('class','enough');
+      showNotification();
     } else {
       banner.setAttribute('class','notenough');
+    }
+  }
+}
+
+function askForNotifications() {
+  if (window.webkitNotifications.checkPermission() != 0) { // 0 is PERMISSION_ALLOWED
+    banner.innerHTML += '<br/><a style="font-size:80%;" href="#" id="etanotiperm">'+
+      'Enable Notifications</a>';
+    banner.setAttribute('class','tall');
+    document.getElementById('etanotiperm').addEventListener('click', 
+      function() {
+        window.webkitNotifications.requestPermission();
+      }
+    );
+  }
+}
+
+function showNotification() {
+  if(!notificationShown) {
+    if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
+      var doctitle;
+      if(/\[.*\](.*)/.test(document.title)) {
+        doctitle = /\[.*\](.*)/.exec(document.title)[1];
+      } else {
+        doctitle = document.title;
+      }
+      var notification = webkitNotifications.createNotification(
+        'http://www.3dtin.com/images/icon128.png',
+        'Ready',  // notification title
+        doctitle  // notification body text
+      );
+      notification.show();
+      notificationShown = true;
     }
   }
 }

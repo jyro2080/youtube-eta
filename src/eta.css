@@ -20,6 +20,11 @@
   z-index : 10000;
 }
 
+.tall {
+  background-color : rgba(255,50,50,100);
+  height : 3em;
+}
+
 .notenough {
   background-color : rgba(255,50,50,100);
   height : 1.5em;
