@@ -226,6 +226,7 @@ function showNotification() {
         doctitle  // notification body text
       );
       notification.show();
+      setTimeout(function () { notification.cancel(); }, 10000);
       notificationShown = true;
     }
   }
